@@ -4,19 +4,17 @@ export const useDashboardStore = defineStore('user', {
    state: () => ({
       userData: { name: '', email: '', photo: '' },
       NotifiMessageDashbaord: '',
-      showNotifiDashboard: false
+      showNotifiDashboard: false,
+      selectedPhoto: null
    }),
    getters: {
       photoUrl: (state) => {
-         const config = useRuntimeConfig()
-         return state.userData.photo
-            ? `${config.public.apiUrl}/img/user/${state.userData.photo}`
-            : null
-      }
+         return state.userData.photo || null
+      },
    },
    actions: {
       setPhoto(file) {
-         this.userData.photo = file
+         this.selectedPhoto = file
       },
 
       async getData() {
@@ -43,7 +41,9 @@ export const useDashboardStore = defineStore('user', {
          const formData = new FormData()
          formData.append('name', this.userData.name)
          formData.append('email', this.userData.email)
-         formData.append('photo', this.userData.photo)
+         if (this.selectedPhoto) {
+            formData.append('photo', this.selectedPhoto)
+         }
          try {
             const config = useRuntimeConfig()
             const res = await $fetch(`${config.public.apiUrl}/api/users/updateMe`, {
@@ -52,6 +52,7 @@ export const useDashboardStore = defineStore('user', {
                body: formData
             })
             this.userData = res.data.updatedUser
+            this.selectedPhoto = null
          } catch (error) {
             console.log('Error:', error);
             this.showNotifiDashboard = true

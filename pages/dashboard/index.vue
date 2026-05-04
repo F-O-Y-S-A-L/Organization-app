@@ -77,7 +77,7 @@
               >
                 <div class="relative">
                   <img
-                    :src="dashboardStore.photoUrl"
+                    :src="previewUrl || dashboardStore.photoUrl"
                     alt="Preview"
                     class="w-20 h-20 lg:w-24 lg:h-24 rounded-full border"
                   />
@@ -173,11 +173,15 @@
 import { ref, onMounted } from "vue";
 import { useDashboardStore } from "@/stores/dashboard";
 const dashboardStore = useDashboardStore();
+const previewUrl = ref(null)
 
 onMounted(() => dashboardStore.getData());
 
-function onFileChange(event) {
-  dashboardStore.setPhoto(event.target.files[0]);
+function onFileChange(e) {
+  const file = e.target.files[0]
+  if (!file) return
+  dashboardStore.setPhoto(file) 
+  previewUrl.value = URL.createObjectURL(file)
 }
 </script>
 
