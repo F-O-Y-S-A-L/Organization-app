@@ -3,7 +3,7 @@ import { navigateTo, useCookie } from '#app'
 
 export const useAuthStore = defineStore('auth', {
    state: () => ({
-      jwt: useCookie('jwt'),
+      jwt: useCookie('jwt').value || null,
       form: { email: '', password: '', name: '' },
       error: '',
       success: '',
@@ -30,6 +30,12 @@ export const useAuthStore = defineStore('auth', {
                body: { email: form.email, password: form.password }
             })
             if (res.token) {
+               const cookie = useCookie('jwt', {
+                  maxAge: 60 * 60 * 24 * 7,
+                  secure: true,
+                  sameSite: 'none'
+               })
+               cookie.value = res.token
                this.jwt = res.token
             }
 
@@ -59,6 +65,8 @@ export const useAuthStore = defineStore('auth', {
                method: "POST",
                credentials: "include",
             })
+            const cookie = useCookie('jwt')
+            cookie.value = null
             this.jwt = null
             navigateTo("/auth/login")
          } catch (error) {
