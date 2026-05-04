@@ -85,7 +85,7 @@
           </p>
           <p class="mt-1 text-base text-gray-500 flex items-center gap-2">
             <img
-              :src="`${config.public.apiUrl}/img/user/${project.createdBy?.photo}`"
+              :src="project.createdBy?.photo"
               alt=""
               class="w-8 h-8 md:w-9 md:h-9 rounded-full"
             />

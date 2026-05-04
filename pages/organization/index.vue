@@ -66,7 +66,7 @@
         </h3>
         <span class="flex gap-2 items-center mt-2">
           <img
-            :src="`${useRuntimeConfig().public.apiUrl}/img/user/${org.ownerId?.photo}`"
+            :src="org.ownerId?.photo"
             class="w-8 h-8 md:w-9 md:h-9 rounded-full"
           />
           <p class="text-base text-gray-800">

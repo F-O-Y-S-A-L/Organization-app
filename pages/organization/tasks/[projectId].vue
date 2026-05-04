@@ -107,7 +107,7 @@
             </p>
             <p class="text-xs text-gray-500 mb-1 flex items-center gap-2">
               <img
-                :src="`${config.public.apiUrl}/img/user/${task.assignedTo.photo}`"
+                :src="task.assignedTo.photo"
                 class="w-8 h-8 rounded-full"
                 alt=""
               />
@@ -190,7 +190,7 @@
             </p>
             <p class="text-xs text-gray-500 mb-1 flex items-center gap-2">
               <img
-                :src="`${config.public.apiUrl}/img/user/${task.assignedTo.photo}`"
+                :src="task.assignedTo.photo"
                 class="w-8 h-8 rounded-full"
                 alt=""
               />
@@ -273,7 +273,7 @@
             </p>
             <p class="text-xs text-gray-500 mb-1 flex items-center gap-2">
               <img
-                :src="`${config.public.apiUrl}/img/user/${task.assignedTo.photo}`"
+                :src="task.assignedTo?.photo"
                 class="w-8 h-8 rounded-full"
                 alt=""
               />
@@ -421,7 +421,7 @@
                 class="text-sm font-semibold text-gray-700 flex items-center gap-2"
               >
                 <img
-                  :src="`${config.public.apiUrl}/img/user/${com.userId.photo}`"
+                  :src="com.userId?.photo"
                   alt=""
                   class="w-8 h-8 rounded-full"
                 />
