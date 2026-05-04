@@ -107,7 +107,7 @@
             </p>
             <p class="text-xs text-gray-500 mb-1 flex items-center gap-2">
               <img
-                :src="task.assignedTo.photo"
+                :src="task.assignedTo?.photo"
                 class="w-8 h-8 rounded-full"
                 alt=""
               />
@@ -190,7 +190,7 @@
             </p>
             <p class="text-xs text-gray-500 mb-1 flex items-center gap-2">
               <img
-                :src="task.assignedTo.photo"
+                :src="task.assignedTo?.photo"
                 class="w-8 h-8 rounded-full"
                 alt=""
               />
