@@ -1,158 +1,318 @@
 <template>
-  <div class="min-h-screen bg-gray-50 p-3 md:p-8">
-    <!-- Header -->
-    <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-6 md:mb-8">
-      <i class="pi pi-briefcase"></i> Project
-    </h1>
-
-    <!-- Notification -->
-    <transition name="slide">
+  <div class="min-h-screen bg-[#070b12] font-sans relative overflow-x-hidden">
+    <!-- Ambient background blobs -->
+    <div class="pointer-events-none fixed inset-0 z-0 overflow-hidden">
       <div
-        v-if="projectStore.showNotifiProject"
-        class="fixed top-[5rem] right-3 md:right-6 bg-slate-400/95 text-white text-base md:text-2xl px-6 md:px-12 py-4 md:py-10 rounded-lg border-2 border-blue-600 shadow-xl z-[9999]"
-      >
-        <span
-          ><i class="pi pi-bell"></i>
-          {{ projectStore.NotifiMessageProject }}</span
+        class="absolute -top-32 -left-24 w-[480px] h-[480px] rounded-full bg-indigo-700/20 blur-[100px] animate-pulse"
+      ></div>
+      <div
+        class="absolute bottom-[10%] -right-20 w-[380px] h-[380px] rounded-full bg-violet-600/15 blur-[90px] animate-pulse [animation-delay:2s]"
+      ></div>
+      <div
+        class="absolute top-[45%] left-[38%] w-[260px] h-[260px] rounded-full bg-cyan-500/10 blur-[80px] animate-pulse [animation-delay:4s]"
+      ></div>
+    </div>
+
+    <div class="relative z-10 max-w-[1300px] mx-auto px-4 md:px-8 py-10 pb-20">
+      <!-- Header -->
+      <div class="flex items-center gap-4 mb-10">
+        <div
+          class="w-14 h-14 flex items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 shadow-lg shadow-indigo-500/30 text-white text-xl shrink-0"
         >
+          <i class="pi pi-briefcase"></i>
+        </div>
+        <div>
+          <h1
+            class="text-3xl md:text-4xl font-extrabold tracking-tight bg-gradient-to-r from-white to-indigo-300 bg-clip-text text-transparent leading-tight"
+          >
+            Projects
+          </h1>
+          <p class="text-sm text-gray-500 mt-0.5">
+            Build and manage your team's work
+          </p>
+        </div>
       </div>
-    </transition>
 
-    <!-- Project Create Form -->
-    <div class="bg-white rounded-lg shadow p-4 md:p-6 mb-6 md:mb-8">
-      <h2 class="text-lg md:text-xl font-bold mb-3 md:mb-4 text-gray-800">
-        Create New Project
-      </h2>
-      <input
-        v-model="projectStore.project.newProjectName"
-        type="text"
-        placeholder="Project name"
-        class="border rounded px-3 py-2 w-full mb-3"
-      />
-      <textarea
-        v-model="projectStore.project.newProjectDescription"
-        placeholder="Project description"
-        class="border rounded px-3 py-2 w-full mb-3"
-      ></textarea>
-      <button
-        @click="projectCreate()"
-        class="bg-blue-900 text-white px-4 md:px-6 py-2 rounded-lg shadow hover:bg-blue-800 transition text-sm md:text-base"
+      <!-- Notification Toast -->
+      <transition
+        enter-active-class="transition-all duration-500 ease-out"
+        enter-from-class="translate-x-full opacity-0"
+        enter-to-class="translate-x-0 opacity-100"
+        leave-active-class="transition-all duration-300 ease-in"
+        leave-from-class="translate-x-0 opacity-100"
+        leave-to-class="translate-x-full opacity-0"
       >
-        + Create Project
-      </button>
-    </div>
-
-    <!-- Search -->
-    <div class="w-80 mb-4 relative">
-      <i
-        class="pi pi-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-      ></i>
-      <input
-        type="search"
-        v-model="projectStore.searchQuery"
-        placeholder="Search project..."
-        class="w-full border p-2 pl-10 rounded outline-none"
-      />
-    </div>
-
-    <Loader v-if="projectStore.isLoading" />
-
-    <!-- Project Cards -->
-    <div
-      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 mb-8 md:mb-10"
-    >
-      <div
-        v-for="project in projectStore.filteredProjects"
-        :key="project._id"
-        class="group bg-white border rounded-lg p-4 md:p-6 shadow hover:shadow-lg transition transform hover:-translate-y-1"
-      >
-        <!-- Project Title -->
-        <NuxtLink
-          :to="`/organization/tasks/${project._id}`"
-          class="block cursor-pointer"
+        <div
+          v-if="projectStore.showNotifiProject"
+          class="fixed top-20 right-4 z-[9999] flex items-center gap-3 bg-gray-900/95 border border-indigo-500/40 backdrop-blur-xl text-indigo-100 px-5 py-4 rounded-2xl shadow-2xl max-w-sm"
         >
-          <h2
-            class="text-lg md:text-xl font-semibold text-gray-800 group-hover:text-blue-600"
+          <div
+            class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white shrink-0"
           >
-            <i class="pi pi-briefcase"></i> {{ project.name }}
-          </h2>
-          <p class="mt-2 text-gray-600 line-clamp-2 text-sm md:text-base">
-            {{ project.description }}
-          </p>
-          <p class="mt-3 text-xs md:text-sm text-gray-400">
-            <i class="pi pi-clock"></i>
-            {{ new Date(project.createdAt).toLocaleDateString("en-US") }}
-          </p>
-          <p class="mt-1 text-base text-gray-500 flex items-center gap-2">
-            <img
-              :src="project.createdBy?.photo"
-              alt=""
-              class="w-8 h-8 md:w-9 md:h-9 rounded-full"
-            />
-            {{ project.createdBy?.email }}
-          </p>
-        </NuxtLink>
+            <i class="pi pi-bell text-sm"></i>
+          </div>
+          <span class="text-sm font-medium">{{
+            projectStore.NotifiMessageProject
+          }}</span>
+        </div>
+      </transition>
 
-        <!-- Action Buttons -->
-        <div class="flex flex-col sm:flex-row gap-2 sm:gap-3 mt-4">
-          <button
-            @click="
-              projectStore.openUpdate(
-                project._id,
-                project.name,
-                project.description,
-              )
-            "
-            class="px-3 md:px-4 py-2 bg-blue-900 text-white rounded hover:bg-blue-800 transition text-sm md:text-base"
+      <!-- Create Project Form -->
+      <div
+        class="bg-white/[0.04] border border-white/[0.08] rounded-2xl p-6 mb-6 backdrop-blur-sm"
+      >
+        <h2
+          class="text-[11px] font-bold text-indigo-400 uppercase tracking-widest mb-4"
+        >
+          Create New Project
+        </h2>
+        <div class="flex flex-col gap-3">
+          <div class="relative">
+            <i
+              class="pi pi-briefcase absolute left-4 top-1/2 -translate-y-1/2 text-indigo-400 text-sm pointer-events-none"
+            ></i>
+            <input
+              v-model="projectStore.project.newProjectName"
+              type="text"
+              placeholder="Project name..."
+              class="w-full bg-white/[0.06] border border-white/10 rounded-xl py-3 pl-11 pr-4 text-gray-100 text-sm placeholder-gray-600 outline-none focus:border-indigo-500/60 focus:ring-2 focus:ring-indigo-500/15 transition-all"
+            />
+          </div>
+          <div class="relative">
+            <i
+              class="pi pi-align-left absolute left-4 top-4 text-indigo-400 text-sm pointer-events-none"
+            ></i>
+            <textarea
+              v-model="projectStore.project.newProjectDescription"
+              placeholder="Project description..."
+              rows="3"
+              class="w-full bg-white/[0.06] border border-white/10 rounded-xl py-3 pl-11 pr-4 text-gray-100 text-sm placeholder-gray-600 outline-none focus:border-indigo-500/60 focus:ring-2 focus:ring-indigo-500/15 transition-all resize-none"
+            ></textarea>
+          </div>
+          <div>
+            <button
+              @click="projectCreate()"
+              class="flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold px-7 py-3 rounded-xl shadow-lg shadow-indigo-600/30 hover:shadow-indigo-500/50 transition-all duration-200 hover:-translate-y-0.5 text-sm"
+            >
+              <i class="pi pi-plus"></i>
+              Create Project
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Search -->
+      <div class="relative w-full md:max-w-sm mb-8">
+        <i
+          class="pi pi-search absolute left-4 top-1/2 -translate-y-1/2 text-indigo-400 text-sm pointer-events-none"
+        ></i>
+        <input
+          type="search"
+          v-model="projectStore.searchQuery"
+          placeholder="Search projects..."
+          class="w-full bg-white/[0.05] border border-white/10 rounded-xl py-2.5 pl-11 pr-4 text-gray-100 text-sm placeholder-gray-600 outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/10 transition-all"
+        />
+      </div>
+
+      <Loader v-if="projectStore.isLoading" />
+
+      <!-- Project Cards -->
+      <div
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 mb-10"
+      >
+        <div
+          v-for="(project, index) in projectStore.filteredProjects"
+          :key="project._id"
+          class="group relative bg-white/[0.04] border border-white/[0.08] rounded-2xl overflow-hidden hover:border-indigo-500/30 hover:shadow-2xl hover:shadow-indigo-900/30 hover:-translate-y-1 transition-all duration-300"
+          :style="`animation: fadeUp 0.45s ease both; animation-delay: ${index * 0.07}s`"
+        >
+          <!-- Top accent line -->
+          <div
+            class="absolute top-0 left-5 right-5 h-px bg-gradient-to-r from-transparent via-indigo-500/60 to-transparent"
+          ></div>
+          <!-- Hover glow -->
+          <div
+            class="absolute inset-0 bg-gradient-to-br from-indigo-600/0 to-violet-600/0 group-hover:from-indigo-600/5 group-hover:to-violet-600/5 transition-all duration-500 rounded-2xl pointer-events-none"
+          ></div>
+
+          <!-- Clickable area -->
+          <NuxtLink
+            :to="`/organization/tasks/${project._id}`"
+            class="block p-5 pb-3"
           >
-            Update
-          </button>
-          <button
-            @click="projectStore.deleteProject(project._id, project.orgId)"
-            class="px-3 md:px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition text-sm md:text-base"
-          >
-            Delete
-          </button>
+            <!-- Project name -->
+            <div class="flex items-start gap-3 mb-3">
+              <div
+                class="w-9 h-9 rounded-xl bg-indigo-500/15 border border-indigo-500/25 flex items-center justify-center text-indigo-400 shrink-0 mt-0.5"
+              >
+                <i class="pi pi-briefcase text-sm"></i>
+              </div>
+              <h2
+                class="font-bold text-gray-100 text-base leading-snug group-hover:text-indigo-300 transition-colors line-clamp-2"
+              >
+                {{ project.name }}
+              </h2>
+            </div>
+
+            <!-- Description -->
+            <p
+              class="text-gray-500 text-xs leading-relaxed line-clamp-2 mb-4 pl-0.5"
+            >
+              {{ project.description }}
+            </p>
+
+            <!-- Divider -->
+            <div class="h-px bg-white/[0.06] mb-3"></div>
+
+            <!-- Creator info -->
+            <div class="flex items-center gap-2 mb-2">
+              <img
+                :src="project.createdBy?.photo"
+                class="w-7 h-7 rounded-full border border-indigo-500/30 object-cover shrink-0"
+              />
+              <div class="min-w-0">
+                <p
+                  class="text-[10px] text-indigo-400 font-bold uppercase tracking-widest"
+                >
+                  Created by
+                </p>
+                <p class="text-gray-500 text-xs truncate">
+                  {{ project.createdBy?.email }}
+                </p>
+              </div>
+            </div>
+
+            <!-- Date -->
+            <p class="flex items-center gap-1.5 text-[11px] text-gray-600 mt-2">
+              <i class="pi pi-clock"></i>
+              {{
+                new Date(project.createdAt).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                })
+              }}
+            </p>
+          </NuxtLink>
+
+          <!-- Action Buttons -->
+          <div class="flex gap-2 px-5 pb-5 pt-1">
+            <button
+              @click="
+                projectStore.openUpdate(
+                  project._id,
+                  project.name,
+                  project.description,
+                )
+              "
+              class="flex-1 flex items-center justify-center gap-1.5 text-xs font-semibold bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 hover:border-amber-500/50 text-amber-300 py-2 rounded-xl transition-all"
+            >
+              <i class="pi pi-pencil text-xs"></i> Update
+            </button>
+            <button
+              @click="projectStore.deleteProject(project._id, project.orgId)"
+              class="flex-1 flex items-center justify-center gap-1.5 text-xs font-semibold bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 hover:border-red-500/50 text-red-400 py-2 rounded-xl transition-all"
+            >
+              <i class="pi pi-trash text-xs"></i> Delete
+            </button>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Update Modal -->
-    <div
-      v-if="projectStore.showUpdate"
-      class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4"
+    <transition
+      enter-active-class="transition-opacity duration-300"
+      enter-from-class="opacity-0"
+      enter-to-class="opacity-100"
+      leave-active-class="transition-opacity duration-200"
+      leave-from-class="opacity-100"
+      leave-to-class="opacity-0"
     >
-      <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-4 md:p-6">
-        <h2 class="text-lg md:text-xl font-bold mb-3 md:mb-4">
-          Update Project
-        </h2>
-        <input
-          v-model="projectStore.projectName"
-          type="text"
-          placeholder="Project Name"
-          class="w-full border rounded px-3 py-2 mb-3 focus:outline-none focus:ring focus:ring-blue-300"
-        />
-        <textarea
-          v-model="projectStore.projectDes"
-          placeholder="Project Description"
-          class="w-full border rounded px-3 py-2 mb-3 focus:outline-none focus:ring focus:ring-blue-300"
-        ></textarea>
-        <div class="flex justify-end gap-2 md:gap-3">
-          <button
-            @click="projectStore.cancelUpdate()"
-            class="px-3 md:px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 text-sm md:text-base"
+      <div
+        v-if="projectStore.showUpdate"
+        class="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4"
+        @click.self="projectStore.cancelUpdate()"
+      >
+        <div
+          class="bg-[#0d1420] border border-white/10 rounded-3xl w-full max-w-md shadow-2xl overflow-hidden animate-scaleIn"
+        >
+          <!-- Modal header -->
+          <div class="flex items-center gap-3 px-6 pt-6 pb-4">
+            <div
+              class="w-11 h-11 rounded-2xl bg-amber-500/15 border border-amber-500/25 flex items-center justify-center text-amber-400 text-lg shrink-0"
+            >
+              <i class="pi pi-pencil"></i>
+            </div>
+            <h2 class="flex-1 text-lg font-extrabold text-gray-100">
+              Update Project
+            </h2>
+            <button
+              @click="projectStore.cancelUpdate()"
+              class="w-8 h-8 rounded-xl bg-white/5 hover:bg-red-500/15 border border-white/10 hover:border-red-500/30 text-gray-500 hover:text-red-400 flex items-center justify-center transition-all text-xs"
+            >
+              <i class="pi pi-times"></i>
+            </button>
+          </div>
+
+          <!-- Modal body -->
+          <div class="px-6 pb-4 flex flex-col gap-4">
+            <div>
+              <label
+                class="block text-[10px] font-bold text-indigo-400 uppercase tracking-widest mb-1.5"
+                >Project Name</label
+              >
+              <div class="relative">
+                <i
+                  class="pi pi-briefcase absolute left-4 top-1/2 -translate-y-1/2 text-indigo-400 text-sm pointer-events-none"
+                ></i>
+                <input
+                  v-model="projectStore.projectName"
+                  type="text"
+                  placeholder="Project Name"
+                  class="w-full bg-white/[0.06] border border-white/10 rounded-xl py-3 pl-11 pr-4 text-gray-100 text-sm placeholder-gray-600 outline-none focus:border-indigo-500/60 focus:ring-2 focus:ring-indigo-500/15 transition-all"
+                />
+              </div>
+            </div>
+            <div>
+              <label
+                class="block text-[10px] font-bold text-indigo-400 uppercase tracking-widest mb-1.5"
+                >Description</label
+              >
+              <div class="relative">
+                <i
+                  class="pi pi-align-left absolute left-4 top-4 text-indigo-400 text-sm pointer-events-none"
+                ></i>
+                <textarea
+                  v-model="projectStore.projectDes"
+                  placeholder="Project Description"
+                  rows="3"
+                  class="w-full bg-white/[0.06] border border-white/10 rounded-xl py-3 pl-11 pr-4 text-gray-100 text-sm placeholder-gray-600 outline-none focus:border-indigo-500/60 focus:ring-2 focus:ring-indigo-500/15 transition-all resize-none"
+                ></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Modal footer -->
+          <div
+            class="flex justify-end gap-2 px-6 py-4 border-t border-white/[0.06]"
           >
-            Cancel
-          </button>
-          <button
-            @click="projectStore.updateProject()"
-            class="px-3 md:px-4 py-2 bg-blue-900 text-white rounded hover:bg-blue-700 text-sm md:text-base"
-          >
-            Save
-          </button>
+            <button
+              @click="projectStore.cancelUpdate()"
+              class="px-5 py-2.5 rounded-xl text-sm font-medium text-gray-400 hover:text-gray-200 hover:bg-white/[0.06] border border-white/10 transition-all"
+            >
+              Cancel
+            </button>
+            <button
+              @click="projectStore.updateProject()"
+              class="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white text-sm font-bold shadow-lg shadow-indigo-600/30 hover:-translate-y-0.5 transition-all"
+            >
+              <i class="pi pi-check text-xs"></i> Save
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </transition>
   </div>
 </template>
 
@@ -160,6 +320,7 @@
 import { useRoute } from "vue-router";
 import { useProjectStore } from "@/stores/project";
 import { useDashboardStore } from "@/stores/dashboard";
+
 const config = useRuntimeConfig();
 const route = useRoute();
 const orgId = route.params.id;
@@ -176,29 +337,28 @@ onMounted(
 );
 </script>
 
-<style scoped>
-.slide-enter-active,
-.slide-leave-active {
-  transition: all 0.5s ease;
+<style>
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
-
-.slide-enter-from {
-  transform: translateX(100%);
-  opacity: 0;
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
-
-.slide-enter-to {
-  transform: translateX(0);
-  opacity: 1;
-}
-
-.slide-leave-from {
-  transform: translateX(0);
-  opacity: 1;
-}
-
-.slide-leave-to {
-  transform: translateX(100%);
-  opacity: 0;
+.animate-scaleIn {
+  animation: scaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 </style>

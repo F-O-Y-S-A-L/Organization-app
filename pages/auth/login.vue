@@ -1,105 +1,177 @@
 <template>
-  <div class="h-screen bg-gray-100 flex items-center justify-center">
-    <!-- Notificaiton -->
-    <transition name="slide">
+  <div
+    class="min-h-screen bg-[#070b12] font-sans relative overflow-hidden flex items-center justify-center px-4"
+  >
+    <!-- Ambient blobs -->
+    <div class="pointer-events-none fixed inset-0 z-0">
+      <div
+        class="absolute -top-32 -left-24 w-[500px] h-[500px] rounded-full bg-indigo-700/20 blur-[120px] animate-pulse"
+      ></div>
+      <div
+        class="absolute -bottom-20 -right-20 w-[400px] h-[400px] rounded-full bg-violet-600/15 blur-[100px] animate-pulse [animation-delay:2s]"
+      ></div>
+    </div>
+
+    <!-- Notification Toast -->
+    <transition
+      enter-active-class="transition-all duration-500 ease-out"
+      enter-from-class="translate-x-full opacity-0"
+      enter-to-class="translate-x-0 opacity-100"
+      leave-active-class="transition-all duration-300 ease-in"
+      leave-from-class="translate-x-0 opacity-100"
+      leave-to-class="translate-x-full opacity-0"
+    >
       <div
         v-if="authStore.showNotifiAuth"
-        class="fixed top-[5rem] right-3 md:right-6 bg-slate-400/95 text-white text-sm px-6 py-5 md:text-2xl md:px-12 md:py-10 rounded-lg border-2 border-blue-600 shadow-xl z-[9999]"
+        class="fixed top-20 right-4 z-[9999] flex items-center gap-3 bg-gray-900/95 border border-indigo-500/40 backdrop-blur-xl text-indigo-100 px-5 py-4 rounded-2xl shadow-2xl max-w-sm"
       >
-        <span
-          ><i class="pi pi-bell"></i> {{ authStore.NotifiMessageAuth }}</span
+        <div
+          class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white shrink-0"
         >
+          <i class="pi pi-bell text-sm"></i>
+        </div>
+        <span class="text-sm font-medium">{{
+          authStore.NotifiMessageAuth
+        }}</span>
       </div>
     </transition>
-    <div class="bg-white shadow-lg rounded-lg mx-2 w-full max-w-md p-4 md:p-8">
-      <h2 class="text-2xl font-bold mb-6 text-gray-800">Log In</h2>
-      <form class="space-y-4" @submit.prevent="authStore.login(authStore.form)">
-        <input
-          v-model="authStore.form.email"
-          type="email"
-          autocomplete="email"
-          placeholder="Email"
-          class="w-full border outline-none rounded-lg p-3 focus:ring focus:ring-blue-300"
-        />
-        <div class="relative w-full">
-          <input
-            v-model="authStore.form.password"
-            :type="authStore.showPassword ? 'text' : 'password'"
-            autocomplete="current-password"
-            placeholder="Password"
-            class="w-full border outline-none rounded-lg p-3 focus:ring focus:ring-blue-300"
-          />
-          <!-- Eye Icon -->
-          <button
-            type="button"
-            @click="authStore.togglePassword()"
-            class="absolute right-3 top-3 text-gray-500 focus:outline-none"
+
+    <!-- Card -->
+    <div class="relative z-10 w-full max-w-md">
+      <!-- Top accent -->
+      <div
+        class="h-px bg-gradient-to-r from-transparent via-indigo-500/60 to-transparent mb-px rounded-t-3xl"
+      ></div>
+
+      <div
+        class="bg-white/[0.04] border border-white/[0.09] rounded-3xl p-8 backdrop-blur-sm shadow-2xl"
+      >
+        <!-- Logo + heading -->
+        <div class="flex flex-col items-center mb-8">
+          <div
+            class="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/30 mb-4"
           >
-            <span v-if="authStore.showPassword"
-              ><i class="pi pi-eye-slash"></i
-            ></span>
-            <span v-else><i class="pi pi-eye"></i></span>
-          </button>
+            <i class="pi pi-bolt text-white text-xl"></i>
+          </div>
+          <h2
+            class="text-2xl font-extrabold bg-gradient-to-r from-white to-indigo-300 bg-clip-text text-transparent"
+          >
+            Welcome back
+          </h2>
+          <p class="text-gray-500 text-sm mt-1">Sign in to your account</p>
         </div>
-        <!-- ✅ Success/Error Message -->
-        <p v-if="authStore.success" class="mt-4 text-green-600">
-          {{ authStore.success }}
-        </p>
-        <p v-if="authStore.error" class="mt-4 text-red-600">
-          {{ authStore.error }}
-        </p>
-        <button
-          type="submit"
-          class="w-full bg-green-600 text-white py-2 rounded-lg shadow hover:bg-green-700 transition"
+
+        <!-- Form -->
+        <form
+          class="space-y-4"
+          @submit.prevent="authStore.login(authStore.form)"
         >
-          {{ authStore.process ? "Loading..." : "Log In" }}
-        </button>
-      </form>
+          <!-- Email -->
+          <div>
+            <label
+              class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1.5"
+              >Email</label
+            >
+            <div class="relative">
+              <i
+                class="pi pi-envelope absolute left-4 top-1/2 -translate-y-1/2 text-indigo-400 text-sm pointer-events-none"
+              ></i>
+              <input
+                v-model="authStore.form.email"
+                type="email"
+                autocomplete="email"
+                placeholder="you@example.com"
+                class="w-full bg-white/[0.06] border border-white/10 rounded-xl py-3 pl-11 pr-4 text-gray-100 text-sm placeholder-gray-600 outline-none focus:border-indigo-500/60 focus:ring-2 focus:ring-indigo-500/15 transition-all"
+              />
+            </div>
+          </div>
 
-      <!-- Forgot Password Link -->
-      <p class="mt-4 text-sm text-gray-600">
-        <NuxtLink to="/forgotPassword" class="text-red-600 hover:underline">
-          Forgot Password?
-        </NuxtLink>
-      </p>
+          <!-- Password -->
+          <div>
+            <label
+              class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1.5"
+              >Password</label
+            >
+            <div class="relative">
+              <i
+                class="pi pi-lock absolute left-4 top-1/2 -translate-y-1/2 text-indigo-400 text-sm pointer-events-none"
+              ></i>
+              <input
+                v-model="authStore.form.password"
+                :type="authStore.showPassword ? 'text' : 'password'"
+                autocomplete="current-password"
+                placeholder="••••••••"
+                class="w-full bg-white/[0.06] border border-white/10 rounded-xl py-3 pl-11 pr-12 text-gray-100 text-sm placeholder-gray-600 outline-none focus:border-indigo-500/60 focus:ring-2 focus:ring-indigo-500/15 transition-all"
+              />
+              <button
+                type="button"
+                @click="authStore.togglePassword()"
+                class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-indigo-400 transition-colors"
+              >
+                <i
+                  :class="
+                    authStore.showPassword ? 'pi pi-eye-slash' : 'pi pi-eye'
+                  "
+                  class="text-sm"
+                ></i>
+              </button>
+            </div>
+          </div>
 
-      <p class="mt-2 text-sm text-gray-600">
-        Don’t have an account?
-        <NuxtLink to="/auth/signup" class="text-blue-600 hover:underline">
-          Sign Up
-        </NuxtLink>
-      </p>
+          <!-- Forgot password -->
+          <div class="flex justify-end">
+            <NuxtLink
+              to="/forgotPassword"
+              class="text-xs text-indigo-400 hover:text-indigo-300 transition-colors"
+            >
+              Forgot password?
+            </NuxtLink>
+          </div>
+
+          <!-- Success / Error -->
+          <p
+            v-if="authStore.success"
+            class="text-emerald-400 text-xs flex items-center gap-1.5"
+          >
+            <i class="pi pi-check-circle"></i> {{ authStore.success }}
+          </p>
+          <p
+            v-if="authStore.error"
+            class="text-red-400 text-xs flex items-center gap-1.5"
+          >
+            <i class="pi pi-times-circle"></i> {{ authStore.error }}
+          </p>
+
+          <!-- Submit -->
+          <button
+            type="submit"
+            class="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold py-3 rounded-xl shadow-lg shadow-indigo-600/30 hover:shadow-indigo-500/50 hover:-translate-y-0.5 transition-all text-sm mt-2"
+          >
+            <span v-if="authStore.process" class="flex items-center gap-2">
+              <i class="pi pi-spin pi-spinner text-sm"></i> Loading...
+            </span>
+            <span v-else class="flex items-center gap-2">
+              Log In <i class="pi pi-arrow-right text-xs"></i>
+            </span>
+          </button>
+        </form>
+
+        <!-- Sign up link -->
+        <p class="text-center text-sm text-gray-600 mt-6">
+          Don't have an account?
+          <NuxtLink
+            to="/auth/signup"
+            class="text-indigo-400 hover:text-indigo-300 font-semibold transition-colors ml-1"
+          >
+            Sign Up
+          </NuxtLink>
+        </p>
+      </div>
     </div>
   </div>
 </template>
+
 <script setup>
 import { useAuthStore } from "@/stores/auth";
 const authStore = useAuthStore();
 </script>
-
-<style scoped>
-.slide-enter-active,
-.slide-leave-active {
-  transition: all 0.5s ease;
-}
-
-.slide-enter-from {
-  transform: translateX(100%);
-  opacity: 0;
-}
-
-.slide-enter-to {
-  transform: translateX(0);
-  opacity: 1;
-}
-
-.slide-leave-from {
-  transform: translateX(0);
-  opacity: 1;
-}
-
-.slide-leave-to {
-  transform: translateX(100%);
-  opacity: 0;
-}
-</style>

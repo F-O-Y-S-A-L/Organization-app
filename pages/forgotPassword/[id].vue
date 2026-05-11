@@ -1,87 +1,147 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gray-100 p-3">
-    <div class="bg-white shadow-lg rounded-lg p-3 w-full max-w-md">
-      <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">
-        <i class="pi pi-lock"></i> Reset Your Password
-      </h2>
+  <div
+    class="min-h-screen bg-[#070b12] font-sans relative overflow-hidden flex items-center justify-center px-4"
+  >
+    <!-- Ambient blobs -->
+    <div class="pointer-events-none fixed inset-0 z-0">
+      <div
+        class="absolute -top-32 -left-24 w-[500px] h-[500px] rounded-full bg-indigo-700/20 blur-[120px] animate-pulse"
+      ></div>
+      <div
+        class="absolute -bottom-20 -right-20 w-[400px] h-[400px] rounded-full bg-violet-600/15 blur-[100px] animate-pulse [animation-delay:2s]"
+      ></div>
+    </div>
 
-      <!-- Notification -->
-      <transition name="slide">
+    <!-- Notification Toast -->
+    <transition
+      enter-active-class="transition-all duration-500 ease-out"
+      enter-from-class="translate-x-full opacity-0"
+      enter-to-class="translate-x-0 opacity-100"
+      leave-active-class="transition-all duration-300 ease-in"
+      leave-from-class="translate-x-0 opacity-100"
+      leave-to-class="translate-x-full opacity-0"
+    >
+      <div
+        v-if="forgotPass.showNotifiForgetPass"
+        class="fixed top-20 right-4 z-[9999] flex items-center gap-3 bg-gray-900/95 border border-indigo-500/40 backdrop-blur-xl text-indigo-100 px-5 py-4 rounded-2xl shadow-2xl max-w-sm"
+      >
         <div
-          v-if="forgotPass.showNotifiForgetPass"
-          class="fixed top-[5rem] right-3 md:right-66 bg-slate-400/95 text-white text-base md:text-2xl px-6 md:px-12 py-4 md:py-10 rounded-lg border-2 border-blue-600 shadow-xl z-[9999]"
+          class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white shrink-0"
         >
-          <span
-            ><li class="pi pi-bell"></li>
-            {{ forgotPass.NotifiMessageForgetPass }}</span
-          >
+          <i class="pi pi-bell text-sm"></i>
         </div>
-      </transition>
+        <span class="text-sm font-medium">{{
+          forgotPass.NotifiMessageForgetPass
+        }}</span>
+      </div>
+    </transition>
 
-      <form class="space-y-4">
-        <!-- New Password -->
-        <div>
-          <label class="block text-gray-600 mb-2 font-medium"
-            >New Password</label
+    <!-- Card -->
+    <div class="relative z-10 w-full max-w-md">
+      <div
+        class="h-px bg-gradient-to-r from-transparent via-indigo-500/60 to-transparent mb-px"
+      ></div>
+
+      <div
+        class="bg-white/[0.04] border border-white/[0.09] rounded-3xl p-8 backdrop-blur-sm shadow-2xl"
+      >
+        <!-- Icon + heading -->
+        <div class="flex flex-col items-center mb-8">
+          <div
+            class="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/30 mb-4"
           >
-          <div class="relative w-full">
-            <input
-              v-model="forgotPass.resetPass.passwordConfirm"
-              :type="forgotPass.showPassword ? 'text' : 'password'"
-              placeholder="Confirm new password"
-              class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none"
-            />
-            <button
-              type="button"
-              @click="forgotPass.togglePassword()"
-              class="absolute right-3 top-3 text-gray-500 focus:outline-none"
-            >
-              <span v-if="forgotPass.showPassword"
-                ><i class="pi pi-eye-slash"></i
-              ></span>
-              <span v-else><i class="pi pi-eye"></i></span>
-            </button>
+            <i class="pi pi-lock text-white text-xl"></i>
           </div>
-        </div>
-
-        <!-- Confirm Password -->
-        <div>
-          <label class="block text-gray-600 mb-2 font-medium"
-            >Confirm Password</label
+          <h2
+            class="text-2xl font-extrabold bg-gradient-to-r from-white to-indigo-300 bg-clip-text text-transparent"
           >
-          <div class="relative w-full">
-            <input
-              v-model="forgotPass.resetPass.password"
-              :type="forgotPass.showPasswordConfirm ? 'text' : 'password'"
-              placeholder="Confirm new password"
-              class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none"
-            />
-            <button
-              type="button"
-              @click="forgotPass.togglePasswordConfirm()"
-              class="absolute right-3 top-3 text-gray-500 focus:outline-none"
-            >
-              <span v-if="forgotPass.showPasswordConfirm"
-                ><i class="pi pi-eye-slash"></i
-              ></span>
-              <span v-else><i class="pi pi-eye"></i></span>
-            </button>
-          </div>
+            Reset Password
+          </h2>
+          <p class="text-gray-500 text-sm mt-1 text-center">
+            Enter your new password below
+          </p>
         </div>
 
-        <!-- Submit Button -->
-        <button
-          @click="passwordForgot()"
-          type="button"
-          class="bg-blue-600 text-white px-6 py-2 rounded-lg shadow hover:bg-blue-700 transition w-full font-semibold"
-        >
-          <i class="pi pi-lock-open"></i> Finish Reset
-        </button>
-      </form>
+        <!-- Form -->
+        <form class="space-y-4">
+          <!-- New Password -->
+          <div>
+            <label
+              class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1.5"
+              >New Password</label
+            >
+            <div class="relative">
+              <i
+                class="pi pi-lock absolute left-4 top-1/2 -translate-y-1/2 text-indigo-400 text-sm pointer-events-none"
+              ></i>
+              <input
+                v-model="forgotPass.resetPass.passwordConfirm"
+                :type="forgotPass.showPassword ? 'text' : 'password'"
+                placeholder="••••••••"
+                class="w-full bg-white/[0.06] border border-white/10 rounded-xl py-3 pl-11 pr-12 text-gray-100 text-sm placeholder-gray-600 outline-none focus:border-indigo-500/60 focus:ring-2 focus:ring-indigo-500/15 transition-all"
+              />
+              <button
+                type="button"
+                @click="forgotPass.togglePassword()"
+                class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-indigo-400 transition-colors"
+              >
+                <i
+                  :class="
+                    forgotPass.showPassword ? 'pi pi-eye-slash' : 'pi pi-eye'
+                  "
+                  class="text-sm"
+                ></i>
+              </button>
+            </div>
+          </div>
 
-      <p class="text-sm text-gray-500 mt-4 text-center">
-        After resetting, you can log in with your new password.
-      </p>
+          <!-- Confirm Password -->
+          <div>
+            <label
+              class="block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1.5"
+              >Confirm Password</label
+            >
+            <div class="relative">
+              <i
+                class="pi pi-lock absolute left-4 top-1/2 -translate-y-1/2 text-indigo-400 text-sm pointer-events-none"
+              ></i>
+              <input
+                v-model="forgotPass.resetPass.password"
+                :type="forgotPass.showPasswordConfirm ? 'text' : 'password'"
+                placeholder="••••••••"
+                class="w-full bg-white/[0.06] border border-white/10 rounded-xl py-3 pl-11 pr-12 text-gray-100 text-sm placeholder-gray-600 outline-none focus:border-indigo-500/60 focus:ring-2 focus:ring-indigo-500/15 transition-all"
+              />
+              <button
+                type="button"
+                @click="forgotPass.togglePasswordConfirm()"
+                class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-indigo-400 transition-colors"
+              >
+                <i
+                  :class="
+                    forgotPass.showPasswordConfirm
+                      ? 'pi pi-eye-slash'
+                      : 'pi pi-eye'
+                  "
+                  class="text-sm"
+                ></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Submit -->
+          <button
+            @click="passwordForgot()"
+            type="button"
+            class="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold py-3 rounded-xl shadow-lg shadow-indigo-600/30 hover:shadow-indigo-500/50 hover:-translate-y-0.5 transition-all text-sm mt-2"
+          >
+            <i class="pi pi-lock-open text-xs"></i> Finish Reset
+          </button>
+        </form>
+
+        <p class="text-xs text-gray-600 text-center mt-6">
+          After resetting, you can log in with your new password.
+        </p>
+      </div>
     </div>
   </div>
 </template>
@@ -92,37 +152,9 @@ import { userForgotPass } from "@/stores/forgotPass";
 
 const route = useRoute();
 const token = route.params.id;
-
 const forgotPass = userForgotPass();
 
 async function passwordForgot() {
   await forgotPass.resetPassword(token);
 }
 </script>
-
-<style scoped>
-.slide-enter-active,
-.slide-leave-active {
-  transition: all 0.5s ease;
-}
-
-.slide-enter-from {
-  transform: translateX(100%);
-  opacity: 0;
-}
-
-.slide-enter-to {
-  transform: translateX(0);
-  opacity: 1;
-}
-
-.slide-leave-from {
-  transform: translateX(0);
-  opacity: 1;
-}
-
-.slide-leave-to {
-  transform: translateX(100%);
-  opacity: 0;
-}
-</style>
