@@ -33,7 +33,8 @@ export const useAuthStore = defineStore('auth', {
                const cookie = useCookie('jwt', {
                   maxAge: 60 * 60 * 24 * 7,
                   secure: true,
-                  sameSite: 'none'
+                  sameSite: 'none',
+                  path: '/'
                })
                cookie.value = res.token
                this.jwt = res.token
@@ -120,6 +121,13 @@ export const useAuthStore = defineStore('auth', {
                credentials: "include",
             })
             if (res.token) {
+               const cookie = useCookie('jwt', {
+                  maxAge: 60 * 60 * 24 * 7,
+                  secure: true,
+                  sameSite: 'none',
+                  path: '/'
+               })
+               cookie.value = res.token
                this.jwt = res.token
             }
             this.status = "Email verified successfully!";
